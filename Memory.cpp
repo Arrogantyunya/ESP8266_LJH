@@ -78,7 +78,30 @@ bool EEPROM_Operations::EEPROM_Reset(void)
  */
 bool DEVEICE_INFORMATION::Save_DeviceID()   //保存设备ID
 {
-    return true;
+    Device_ID.ID = ESP.getFlashChipId();
+    
+    for (size_t i = 0; i < sizeof(Device_ID); i++)
+    {
+        EEPROM.write(Device_ID_BASE_ADDR+i,Device_ID.id[i]);
+    }
+
+    EEPROM.end(); //保存更改的数据
+
+    EEPROM.begin(EEPROM_Capacity);//重新申请内存
+
+    if (EEPROM.read(Device_ID_BASE_ADDR) == Device_ID.id[0] && 
+        EEPROM.read(Device_ID_BASE_ADDR+1) == Device_ID.id[1] &&
+        EEPROM.read(Device_ID_BASE_ADDR+2) == Device_ID.id[2] &&
+        EEPROM.read(Device_ID_BASE_ADDR+3) == Device_ID.id[3])
+    {
+        Serial.println(String("保存设备ID成功...") + "设备ID：" + String(Device_ID.ID,HEX));
+        return true;
+    }
+    else
+    {
+        Serial.println("保存设备ID失败");
+        return false;
+    }
 }
 
 /*

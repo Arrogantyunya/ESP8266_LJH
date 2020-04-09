@@ -1,6 +1,6 @@
 // 
 /*
-    Name:     	ESP8266_Test.ino
+    Name:     	ESP8266_LJH.ino
     Created:	2020/4/7 9:45:47
     Author:   	刘家辉
 */
@@ -89,7 +89,7 @@ void setup()
 	Serial.printf("Flash 实际大小: %u KBytes\n", ESP.getFlashChipRealSize()/1024);
 	Serial.printf("IDE配置Flash大小: %u KBytes,往往小于实际大小\n", ESP.getFlashChipSize()/1024);
 	Serial.printf("IDE配置Flash频率 : %u MHz\n", ESP.getFlashChipSpeed()/1000000);
-	Serial.printf("Flash ide mode:  %s\n\n", (ideMode == FM_QIO ? "QIO" : ideMode == FM_QOUT ? "QOUT" : ideMode == FM_DIO ? "DIO" : ideMode == FM_DOUT ? "DOUT" : "UNKNOWN"));
+	Serial.printf("Flash ide mode:  %s\n", (ideMode == FM_QIO ? "QIO" : ideMode == FM_QOUT ? "QOUT" : ideMode == FM_DIO ? "DIO" : ideMode == FM_DOUT ? "DOUT" : "UNKNOWN"));
 #endif
 
 #if SOFT_HARD_VERSION	//保存软硬件版本至EEPROM
@@ -160,12 +160,6 @@ void setup()
 	{
 		//初始化异常
 	}
-	
-	
-	// saveConfig();
-	// loadConfig();
-
-	// Device_ID.ID = ESP.getFlashChipId();
 }
  
 void loop() 
@@ -238,43 +232,4 @@ void Serial_Port_Instruction()//串口指令配置
 			Serial.println("输入错误 <Com_Set_Cyclic_interval>");
 		}
 	}
-}
-
-/*
- * 保存参数到EEPROM
-*/
-void saveConfig()
-{
-	Serial.println("Save config!");
-	Serial.print("stassid:");
-	Serial.println(config.stassid);
-	Serial.print("stapsw:");
-	Serial.println(config.stapsw);
-
-	uint8_t *p = (uint8_t*)(&config);
-	Serial.println(String("sizeof(config) = ") + sizeof(config));
-	for (int i = 0; i < sizeof(config); i++)
-	{
-		EEPROM.write(i, *(p + i));
-	}
-	EEPROM.commit();
-	EEPROM.begin(100);
-}
-
-/*
- * 从EEPROM加载参数
-*/
-void loadConfig()
-{
-	uint8_t *p = (uint8_t*)(&config);
-	for (int i = 0; i < sizeof(config); i++)
-	{
-		*(p + i) = EEPROM.read(i);
-	}
-	EEPROM.commit();
-	Serial.println("-----Read config-----");
-	Serial.print("stassid:");
-	Serial.println(config.stassid);
-	Serial.print("stapsw:");
-	Serial.println(config.stapsw);
 }
