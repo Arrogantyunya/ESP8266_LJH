@@ -109,9 +109,14 @@ bool DEVEICE_INFORMATION::Save_DeviceID()   //保存设备ID
  @para      : 
  @return    : None
  */
-void DEVEICE_INFORMATION::Read_DeviceID()   //读取设备ID
+unsigned int DEVEICE_INFORMATION::Read_DeviceID()   //读取设备ID
 {
-
+    for (size_t i = 0; i < sizeof(Device_ID); i++)
+    {
+        Device_ID.id[i] = EEPROM.read(Device_ID_BASE_ADDR+i);
+    }
+    Serial.println(String("Device_ID.ID = ") + Device_ID.ID);
+    return Device_ID.ID;
 }
 
 /*
@@ -121,7 +126,28 @@ void DEVEICE_INFORMATION::Read_DeviceID()   //读取设备ID
  */
 bool DEVEICE_INFORMATION::Clean_DeviceID()   //清除设备ID
 {
-    return true;
+    for (size_t i = 0; i < sizeof(Device_ID); i++)
+    {
+        EEPROM.write(Device_ID_BASE_ADDR+i,0x00);
+    }
+
+    EEPROM.end(); //保存更改的数据
+
+    EEPROM.begin(EEPROM_Capacity);//重新申请内存
+
+    if (EEPROM.read(Device_ID_BASE_ADDR) == 0x00 && 
+        EEPROM.read(Device_ID_BASE_ADDR+1) == 0x00 &&
+        EEPROM.read(Device_ID_BASE_ADDR+2) == 0x00 &&
+        EEPROM.read(Device_ID_BASE_ADDR+3) == 0x00)
+    {
+        Serial.println(String("清除设备ID成功..."));
+        return true;
+    }
+    else
+    {
+        Serial.println("清除设备ID失败");
+        return false;
+    }
 }
 
 

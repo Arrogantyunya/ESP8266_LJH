@@ -33,7 +33,7 @@ private:
     /* data */
 public:
     bool Save_DeviceID();   //保存设备ID
-    void Read_DeviceID();   //读取设备ID
+    unsigned int Read_DeviceID();   //读取设备ID
     bool Clean_DeviceID();  //清除设备ID
 };
 
